@@ -11,13 +11,13 @@ import CoreData
 struct JournalView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
-//    @FetchRequest(
-//        entity: KakeiboItem.entity(),
-//        sortDescriptors: [NSSortDescriptor(keyPath: \KakeiboItem.date, ascending: true)],
-//        animation: .default
-//    )
-//
-//    var items: FetchedResults<KakeiboItem>
+    @FetchRequest(
+        entity: KakeiboItem.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \KakeiboItem.date, ascending: true)],
+        animation: .default
+    )
+
+    var items: FetchedResults<KakeiboItem>
     var body: some View {
         
         List {
@@ -32,14 +32,15 @@ struct JournalView: View {
             .font(.title2)
 //            ForEach(items.week.count){ num in
 //            WeekRow(items: items)
-            WeekRow()
+            WeekRow(items: items)
         }
         .padding(8)
     }
 }
 
 struct WeekRow: View{
-//    var items: FetchedResults<KakeiboItem>
+    var items: FetchedResults<KakeiboItem>
+//    var weeklyCost: Int {}
     private var startDateOfMonth: Date {
         // 今月のItemだけを取得
         let calendar = Calendar.current
@@ -49,32 +50,33 @@ struct WeekRow: View{
     }
     var body: some View {
         
-        let monthlyCost = 0
-        
+        let weeklyCost = 0
         ForEach(1 ..< 6) { num in
-            HStack {
-                Text("\(num)週目")
-                Spacer()
-                Text("¥\(monthlyCost)")
+            VStack{
+                HStack {
+                    Text("\(num)週目")
+                    Spacer()
+                    Text("¥\(weeklyCost)")
+                }
+                .font(.title3)
+                
+                ForEach(getAllDataByMonth(fromDate: startDateOfMonth, week: num)) { kakeiboItem in
+                    
+                    itemRow(item: kakeiboItem)
+                }
             }
-            .font(.title3)
-        }
-
-        
-        ForEach(getAllDataByMonth(fromDate: startDateOfMonth)) { kakeiboItem in
-            itemRow(item: kakeiboItem)
         }
     }
     
-    func getAllDataByMonth(fromDate: Date) -> [KakeiboItem] {
+    func getAllDataByMonth(fromDate: Date, week: Int) -> [KakeiboItem] {
         let persistenceControler = PersistenceController.shared
         let context = persistenceControler.container.viewContext
         
         let request = NSFetchRequest<KakeiboItem>(entityName: "KakeiboItem")
-        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
-        //crashする
-//        let predicate = NSPredicate(format: "date >= %@", fromDate as CVarArg)
-//        request.predicate = predicate
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        
+        let predicate = NSPredicate(format: "date >= %@ AND week == %d", fromDate as CVarArg, week)
+        request.predicate = predicate
         
         do {
             let items = try context.fetch(request)
@@ -84,6 +86,26 @@ struct WeekRow: View{
             fatalError()
         }
     }
+    
+//    func getWeeklyCost() -> [KakeiboItem]{
+//        let persistenceControler = PersistenceController.shared
+//        let context = persistenceControler.container.viewContext
+//
+//        let request = NSFetchRequest<KakeiboItem>(entityName: "KakeiboItem")
+//        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+//
+//        let predicate = NSPredicate(format: "date >= %@ AND week == %d", fromDate as CVarArg, week)
+//        request.predicate = predicate
+//
+//        do {
+//            let items = try context.fetch(request)
+//            return items
+//        }
+//        catch {
+//            fatalError()
+//        }
+//    }
+    
 }
 struct itemRow: View {
     var item: KakeiboItem

@@ -24,19 +24,20 @@ struct ContentView: View {
             JournalView()
                 .environment(\.managedObjectContext, self.viewContext)
                 .tabItem {
+                    Image(systemName: "pencil.tip.crop.circle.badge.plus")
                     Text("記録")
                 }.tag(2)
             
-            GraphView()
-                .environment(\.managedObjectContext, self.viewContext)
-                .tabItem {
-                    Text("グラフ")
-                }.tag(3)
-            SettingView()
-                .environment(\.managedObjectContext, self.viewContext)
-                .tabItem {
-                    Text("設定")
-                }.tag(4)
+//            GraphView()
+//                .environment(\.managedObjectContext, self.viewContext)
+//                .tabItem {
+//                    Text("グラフ")
+//                }.tag(3)
+//            SettingView()
+//                .environment(\.managedObjectContext, self.viewContext)
+//                .tabItem {
+//                    Text("設定")
+//                }.tag(4)
         }
         
     }
