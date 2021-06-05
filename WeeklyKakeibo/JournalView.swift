@@ -18,20 +18,56 @@ struct JournalView: View {
     )
 
     var items: FetchedResults<KakeiboItem>
+    var dateFormat: DateFormatter {
+        let dformat = DateFormatter()
+        dformat.dateFormat = "M"
+        return dformat
+    }
+//    var monthlyCost: Double {
+//        var priceTotal: Double = 0
+//        let calendar = Calendar.current
+//        let comps = calendar.dateComponents([.year, .month], from: Date())
+//        let startOfMonth = calendar.date(from: comps)!
+//
+//        let expression = NSExpressionDescription()
+//        expression.expression = NSExpression(forFunction: "sum:", arguments: [NSExpression(forKeyPath: "itemPrice")])
+//        expression.name = "priceTotal"
+//        expression.expressionResultType = .doubleAttributeType
+//
+//        let persistenceControler = PersistenceController.shared
+//        let context = persistenceControler.container.viewContext
+//
+//        let request = NSFetchRequest<KakeiboItem>(entityName: "KakeiboItem")
+//        request.returnsObjectsAsFaults = false
+//        request.propertiesToFetch = [expression]
+//        request.resultType = .dictionaryResultType
+//
+//        let predicate = NSPredicate(format: "date >= %@", startOfMonth as CVarArg)
+//        request.predicate = predicate
+//
+//        do {
+//            let results = try context.fetch(request)
+//            let data = results.map { (result) -> (Double)}
+//            let resultMap = results[0] as! [String:Double]
+//            priceTotal = resultMap["priceTotal"]!
+//        }
+//        catch {
+//            NSLog("Error when summing amounts: \(error.localizedDescription)")
+//        }
+//        return priceTotal
+//    }
+    
     var body: some View {
         
         List {
             HStack {
-                var month = "12月"
-                Text(month)
+                Text("\(dateFormat.string(from: Date()))月")
                     .fontWeight(.heavy)
                 Spacer()
-                Text("¥12650")
+                Text("¥0")
                     .multilineTextAlignment(.trailing)
             }
             .font(.title2)
-//            ForEach(items.week.count){ num in
-//            WeekRow(items: items)
             WeekRow(items: items)
         }
         .padding(8)
@@ -87,6 +123,7 @@ struct WeekRow: View{
         }
     }
     
+    //weekごとの合計Priceを取得
 //    func getWeeklyCost() -> [KakeiboItem]{
 //        let persistenceControler = PersistenceController.shared
 //        let context = persistenceControler.container.viewContext

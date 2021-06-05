@@ -24,7 +24,7 @@ struct ContentView: View {
             JournalView()
                 .environment(\.managedObjectContext, self.viewContext)
                 .tabItem {
-                    Image(systemName: "pencil.tip.crop.circle.badge.plus")
+                    Image(systemName: "tray")
                     Text("記録")
                 }.tag(2)
             
